@@ -80,7 +80,7 @@ footer {
 }
 
 .board-header {
-    @apply flex justify-betwee items-center p-6;
+    @apply flex justify-between items-center p-6;
 
     input {
         @apply outline-none text-center;
