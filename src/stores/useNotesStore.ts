@@ -47,7 +47,7 @@ const useNotesStore = defineStore("notes", {
         dateAdded: new Date(),
         coords: {
           x: 50,
-          y: 50,
+          y: 100,
         },
       },
     ] as Note[],

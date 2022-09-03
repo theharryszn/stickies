@@ -7,9 +7,8 @@ import NoteView from "../components/NoteView.vue";
 const store = useNotesStore();
 
 const addNewNote = (e: MouseEvent) => {
-  const boardCoords = (e.target as Element).getBoundingClientRect();
-  const y = e.clientY - boardCoords.top;
-  const x = e.clientX - boardCoords.left;
+  const y = e.pageY;
+  const x = e.pageX;
   store.newNote({
     x,
     y,
@@ -42,6 +41,8 @@ const addNewNote = (e: MouseEvent) => {
       <NoteView v-for="note in store.notes" :key="note.id" :note="note" />
       <CursorView />
     </div>
-    <FooterView />
+    <div class="board-footer">
+      <FooterView />
+    </div>
   </div>
 </template>

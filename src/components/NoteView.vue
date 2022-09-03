@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import type { Note } from "../stores/useNotesStore";
 import useNotesStore from "../stores/useNotesStore";
 
@@ -18,11 +18,12 @@ const style = computed(() => {
 
 const bringToTop = (event: MouseEvent) => {
   event.stopPropagation();
-  console.log({ ...event.target });
 };
 
-const onInput = (content: string) => {
-  store.updateNoteContent(props.note.id, content);
+const inputValue = ref<string>(props.note.content);
+
+const onInput = () => {
+  store.updateNoteContent(props.note.id, inputValue.value);
 };
 </script>
 <template>
@@ -44,8 +45,8 @@ const onInput = (content: string) => {
     <textarea
       class="content"
       placeholder="Write Something"
-      :value="props.note.content"
-      @input="(event) => onInput(event.target.value)"
+      v-model="inputValue"
+      @input="onInput"
     ></textarea>
   </div>
 </template>

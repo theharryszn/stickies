@@ -42,8 +42,8 @@ b {
 }
 
 .board {
-    @apply flex-1 p-4 relative;
-    cursor: crosshair;
+    @apply flex-1 p-4 relative w-screen overflow-hidden;
+    cursor: crosshair ;
 }
 
 .cursor {
@@ -80,12 +80,18 @@ footer {
 }
 
 .board-header {
-    @apply flex justify-between items-center p-6;
+    @apply flex justify-between items-center p-6 fixed top-0 w-full z-50;
 
     input {
         @apply outline-none text-center;
     }
 }
+
+.board-footer {
+    @apply flex justify-between items-center fixed bottom-0 w-full z-50;
+}
+
+
 
 .note {
     @apply bg-red-500 h-[16rem] max-h-[rem] aspect-square text-white p-4 shadow-2xl rounded-sm absolute text-sm;
