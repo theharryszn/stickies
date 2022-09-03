@@ -147,7 +147,20 @@ export default defineStore("stickies", {
       this.save();
     },
     love(id: string) {
-      // do nothing
+      const board = this.boards.find(
+        (board) => board.id === this.activeBoard.id
+      );
+      if (board) {
+        const note = board.notes.find((note) => note.id === id);
+
+        if (note) {
+          if (note.loved) {
+            note.loved = false;
+          } else {
+            note.loved = true;
+          }
+        }
+      }
       this.save();
     },
     updateNoteContent(id: string, newContent: string) {

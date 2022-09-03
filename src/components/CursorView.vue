@@ -15,8 +15,8 @@ const move = (top: number, left: number) => {
 
 onMounted(() => {
   window.addEventListener("mousemove", (e) => {
-    const x = e.pageX;
-    const y = e.pageY;
+    const x = e.pageX - window.scrollX;
+    const y = e.pageY - window.scrollY;
     move(y, x);
   });
 });

@@ -3,14 +3,14 @@
 import CursorView from "../components/CursorView.vue";
 import useStore from "../stores/useStore";
 import NoteView from "../components/NoteView.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import BoardListItem from "../components/BoardListItem.vue";
 
 const store = useStore();
 
 const addNewNote = (e: MouseEvent) => {
-  const y = e.clientY;
-  const x = e.clientX;
+  const y = e.clientY + window.scrollY;
+  const x = e.clientX + window.scrollX;
   store.newNote({
     x,
     y,
@@ -27,9 +27,13 @@ const newBoard = () => {
   store.newBoard();
   boardListOpen.value = false;
 };
+
+onMounted(() => {
+  // console.log($refs.items);
+});
 </script>
 <template>
-  <div class="viewport-container">
+  <div class="board-container">
     <div class="board-header">
       <span class="boards-btn" @click="() => (boardListOpen = true)"
         >Your Boards ({{ store.boards.length }})</span
@@ -48,11 +52,15 @@ const newBoard = () => {
         >
         <span class="boards-btn" @click="store.clear">Clear All</span>
       </div>
+    </div>
+    <Transition name="fade">
       <div
+        @click="() => (boardListOpen = false)"
         v-if="boardListOpen"
         class="boards-list-backdrop"
-        @click="() => (boardListOpen = false)"
       ></div>
+    </Transition>
+    <Transition name="slideRight">
       <div v-if="boardListOpen" class="boards-list">
         <div>Boards</div>
         <div class="board-list-item" @click="newBoard">
@@ -77,7 +85,7 @@ const newBoard = () => {
           :board="board"
         />
       </div>
-    </div>
+    </Transition>
     <div class="board" @click="addNewNote">
       <NoteView
         v-for="note in store.activeBoard.notes"

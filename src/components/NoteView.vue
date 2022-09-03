@@ -40,6 +40,7 @@ const love = () => {
       <button @click="love" class="delete">
         <svg
           class="w-3.5 h-3.5"
+          :class="{ 'fill-white stroke-white': note.loved }"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
