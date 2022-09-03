@@ -49,16 +49,32 @@ export type Board = {
   color: string;
 };
 
+const DEFAULT_NOTE: Note = {
+  id: "1",
+  content:
+    "How to 😎\n\n - Click anywhere to add a new note. \n - Hover on each note to show options. \n - Click on Your Boards to view and create a new board \n - Love you, Harry ❤️",
+  dateAdded: new Date(),
+  loved: false,
+  coords: {
+    x: 50,
+    y: 100,
+  },
+  color: getRandomColor(),
+};
+
+const DEFAULT_BOARDS: Board[] = [
+  {
+    id: uuid(),
+    title: "untitled",
+    notes: [DEFAULT_NOTE],
+    color: getRandomColor(),
+  },
+];
+
 export default defineStore("stickies", {
   state() {
     const storage =
-      localStorage.getItem("boards") ||
-      `[{
-        "id": "${uuid()}",
-        "title": "untitled",
-        "notes": [],
-        "color": "${getRandomColor()}"
-    }]`;
+      localStorage.getItem("boards") || JSON.stringify(DEFAULT_BOARDS);
     const boards = JSON.parse(storage) as Board[];
     return {
       boards,
@@ -88,7 +104,7 @@ export default defineStore("stickies", {
       const board: Board = {
         id: uuid(),
         title: `untitled ${noOfUntitled + 1}`,
-        notes: [],
+        notes: [DEFAULT_NOTE],
         color: getRandomColor(),
       };
 
