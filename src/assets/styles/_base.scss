@@ -21,17 +21,17 @@ a {
 body {
     margin: 0;
     font-family: "Eina", sans-serif;
-    font-size: 16px;
+    font-size: 14px;
 
     @include media("<=1200px") {
-        font-size: 14px;
+        font-size: 12px;
     }
 }
 
 // Fonts
 @font-face {
     font-family: 'Eina';
-    src: url('./fonts/eina01-regular-webfont.57ac5b4b.woff2') format('woff2');
+    src: url('../fonts/eina01-regular-webfont.57ac5b4b.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -39,7 +39,7 @@ body {
 
 @font-face {
     font-family: 'Eina';
-    src: url('./fonts/eina01-semibold-webfont.93d21e16.woff2') format('woff2');
+    src: url('../fonts/eina01-semibold-webfont.93d21e16.woff2') format('woff2');
     font-weight: 500;
     font-style: normal;
     font-display: swap;
@@ -47,7 +47,7 @@ body {
 
 @font-face {
     font-family: 'Eina';
-    src: url('./fonts/eina01-bold-webfont.17ecfa75.woff2') format('woff2');
+    src: url('../fonts/eina01-bold-webfont.17ecfa75.woff2') format('woff2');
     font-weight: 600;
     font-style: normal;
     font-display: swap;
