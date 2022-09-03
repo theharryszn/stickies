@@ -47,7 +47,7 @@ b {
 }
 
 .cursor {
-    @apply hidden w-10 h-10 rounded-full bg-red-500/20 transform -translate-y-1/2 -translate-x-1/2 fixed;
+    @apply hidden w-10 h-10 rounded-full bg-red-500/20 z-[99999] transform -translate-y-1/2 -translate-x-1/2 fixed ;
     transition: .3s opacity cubic-bezier(1, 0, 0, 1);
     pointer-events: none;
 }
@@ -79,11 +79,70 @@ footer {
     @apply font-medium;
 }
 
+@keyframes slideRight {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateY(0%);
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 .board-header {
-    @apply flex justify-between items-center p-6 fixed top-0 w-full z-50;
+    @apply flex justify-between items-center p-4 fixed top-0 w-full z-50;
 
     input {
-        @apply outline-none text-center;
+        @apply outline-none text-center bg-transparent;
+    }
+
+    .boards-btn {
+        @apply p-2 px-4 hover:bg-red-500/25 transition rounded-md cursor-pointer;
+    }
+
+    .boards-list {
+        @apply fixed left-0 top-0 px-8 p-6 bg-white/70 z-[200] flex flex-col w-max shadow-xl h-full space-y-4;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        animation: slideRight 2s ease-in-out;
+        -webkit-animation: slideRight .5s cubic-bezier(1, 0, 0, 1);
+    }
+
+    .boards-list-backdrop {
+        @apply w-screen h-screen fixed top-0 left-0 bg-black/10;
+        animation: fade 2s ease-in-out;
+        -webkit-animation: fade .5s cubic-bezier(1, 0, 0, 1);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
+    .board-list-item {
+        @apply relative w-48 aspect-video border-red-500 opacity-80 hover:opacity-100 border-2 ring-4 ring-red-500/5 hover:border-red-500 flex items-center justify-center rounded-md text-sm transition cursor-pointer transform hover:scale-105;
+
+        .delete-board {
+            @apply bg-red-500/90 text-white opacity-0 rounded-full p-2 absolute right-0 top-0 transform translate-x-1/2 -translate-y-1/2;
+        }
+
+        &:hover {
+            .delete-board {
+                @apply opacity-100;
+                transition-timing-function: cubic-bezier(1, 0, 0, 1);
+            }
+        }
+    }
+
+    .board-list-item.active {
+        @apply border-red-500 border-2;
     }
 }
 
@@ -93,10 +152,22 @@ footer {
 
 
 .note {
-    @apply bg-red-500 h-[16rem] max-h-[rem] aspect-square text-white p-4 shadow-2xl rounded-sm absolute text-sm;
+    @apply bg-red-500 h-[16rem] max-h-[rem] aspect-square text-white p-4 shadow-2xl rounded-sm absolute text-sm overflow-hidden;
 
     .note-header {
-        @apply text-white flex justify-end;
+        @apply text-white p-2 flex justify-end space-x-1 absolute cursor-pointer top-0 right-0 transition;
+        transform: translateY(-100%);
+        transition-timing-function: cubic-bezier(1, 0, 0, 1);
+
+        .delete {
+            @apply bg-black/10 rounded-full p-2;
+        }
+    }
+
+    &:hover {
+        .note-header {
+            transform: translateY(0%);
+        }
     }
 
     .content {
