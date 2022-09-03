@@ -72,7 +72,7 @@ b {
 }
 
 footer {
-    @apply flex flex-row place-content-between p-6;
+    @apply flex flex-row justify-between items-center p-6;
 }
 
 .link {
@@ -80,7 +80,7 @@ footer {
 }
 
 .board-header {
-    @apply flex place-content-between p-6;
+    @apply flex justify-betwee items-center p-6;
 
     input {
         @apply outline-none text-center;
@@ -91,7 +91,7 @@ footer {
     @apply bg-red-500 h-[16rem] max-h-[rem] aspect-square text-white p-4 shadow-2xl rounded-sm absolute text-sm;
 
     .note-header {
-        @apply text-white flex place-content-end;
+        @apply text-white flex justify-end;
     }
 
     .content {
