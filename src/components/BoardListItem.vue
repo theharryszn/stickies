@@ -19,11 +19,16 @@ const style = computed(() => {
 const deleteBoard = () => {
   store.deleteBoard(props.board.id);
 };
+
+const click = () => {
+  store.activeBoard = props.board;
+  store.boardsListOpen = false;
+  store.save();
+};
 </script>
 <template>
   <div
     class="board-list-item"
-    @click="() => (store.activeBoard = board)"
     :class="{ active: store.activeBoard.id === board.id }"
     :style="style"
   >
@@ -46,6 +51,8 @@ const deleteBoard = () => {
         ></path>
       </svg>
     </button>
-    {{ board.title }}
+    <div @click="click" class="board-list-item-content">
+      {{ board.title }}
+    </div>
   </div>
 </template>

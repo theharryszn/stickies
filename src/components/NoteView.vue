@@ -8,6 +8,8 @@ const props = defineProps<{
   note: Note;
 }>();
 
+const noteRef = ref<HTMLDivElement | null>(null);
+
 const style = computed(() => {
   return {
     top: `${props.note.coords.y}px`,
@@ -16,8 +18,15 @@ const style = computed(() => {
   };
 });
 
-const bringToTop = (event: MouseEvent) => {
-  event.stopPropagation();
+const bringToTop = (e: MouseEvent) => {
+  e.stopPropagation();
+  if (noteRef.value) {
+    if (store.prev) {
+      store.prev.style.zIndex = "1";
+    }
+    noteRef.value.style.zIndex = "1000";
+    store.prev = noteRef.value;
+  }
 };
 
 const inputValue = ref<string>(props.note.content);
@@ -35,7 +44,7 @@ const love = () => {
 };
 </script>
 <template>
-  <div class="note" :style="style" @click="bringToTop">
+  <div class="note" ref="noteRef" :style="style" @click="bringToTop">
     <div class="note-header">
       <button @click="love" class="delete">
         <svg

@@ -62,23 +62,32 @@ const DEFAULT_NOTE: Note = {
   color: getRandomColor(),
 };
 
-const DEFAULT_BOARDS: Board[] = [
-  {
+const getNewBoard = () => {
+  const randomColor = getRandomColor();
+
+  const board: Board = {
     id: uuid(),
-    title: "untitled",
-    notes: [DEFAULT_NOTE],
-    color: getRandomColor(),
-  },
-];
+    title: `untitled`,
+    notes: [{ ...DEFAULT_NOTE, color: randomColor }],
+    color: randomColor,
+  };
+
+  return board;
+};
+
+const DEFAULT_BOARDS = [getNewBoard()];
 
 export default defineStore("stickies", {
   state() {
     const storage =
       localStorage.getItem("boards") || JSON.stringify(DEFAULT_BOARDS);
     const boards = JSON.parse(storage) as Board[];
+
     return {
       boards,
       activeBoard: boards[0],
+      boardsListOpen: false,
+      prev: null as HTMLDivElement | null,
     };
   },
   actions: {
@@ -97,16 +106,7 @@ export default defineStore("stickies", {
       this.save();
     },
     newBoard() {
-      const noOfUntitled = this.boards.filter((board) =>
-        board.title.includes("untitled")
-      ).length;
-
-      const board: Board = {
-        id: uuid(),
-        title: `untitled ${noOfUntitled + 1}`,
-        notes: [DEFAULT_NOTE],
-        color: getRandomColor(),
-      };
+      const board = getNewBoard();
 
       this.boards.push(board);
 
@@ -117,6 +117,10 @@ export default defineStore("stickies", {
       this.boards = this.boards.filter((board) => board.id !== boardId);
 
       this.save();
+
+      if (boardId === this.activeBoard.id) {
+        this.activeBoard = this.boards[0];
+      }
     },
     newNote(coords: { x: number; y: number }) {
       const board = this.boards.find(
@@ -164,7 +168,20 @@ export default defineStore("stickies", {
       this.save();
     },
     updateNoteContent(id: string, newContent: string) {
-      // do nothing
+      const board = this.boards.find(
+        (board) => board.id === this.activeBoard.id
+      );
+      if (board) {
+        const note = board.notes.find((note) => note.id === id);
+
+        if (note) {
+          if (note.loved) {
+            note.content = newContent;
+          } else {
+            note.content = newContent;
+          }
+        }
+      }
       this.save();
     },
   },

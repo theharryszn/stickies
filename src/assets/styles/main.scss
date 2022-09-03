@@ -60,6 +60,23 @@ b {
     .cursor {
         @apply block;
     }
+
+    .delete-board {
+        @apply opacity-0; 
+    }
+
+    .board-list-item {
+        &:hover {
+                .delete-board {
+                    @apply opacity-100;
+                    transition-timing-function: cubic-bezier(1, 0, 0, 1);
+                }
+        }
+
+        .board-list-item-content {
+            @apply w-full h-full flex items-center justify-center;
+        }
+    }
 }
 
 .text-up {
@@ -92,15 +109,9 @@ footer {
         @apply relative w-48 aspect-video border-red-500 opacity-80 hover:opacity-100 border-2 ring-4 ring-red-500/5 hover:border-red-500 flex items-center justify-center rounded-md text-sm transition cursor-pointer transform hover:scale-105;
 
         .delete-board {
-            @apply bg-red-500/90 text-white opacity-0 rounded-full p-2 absolute right-0 top-0 transform translate-x-1/2 -translate-y-1/2;
+            @apply bg-red-500/90 text-white rounded-full p-2 absolute right-0 top-0 transform translate-x-1/2 -translate-y-1/2;
         }
 
-        &:hover {
-            .delete-board {
-                @apply opacity-100;
-                transition-timing-function: cubic-bezier(1, 0, 0, 1);
-            }
-        }
     }
 
     .board-list-item.active {
@@ -164,7 +175,7 @@ footer {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity .1s cubic-bezier(1, 0, 0, 1);
+  transition: opacity .1s ease-in-out;
 }
 
 .fade-enter-from,
@@ -179,7 +190,7 @@ footer {
 
 .slideRight-enter-active,
 .slideRight-leave-active {
-  transition: transform .1s cubic-bezier(1, 0, 0, 1);
+  transition: transform .1s ease-in-out;
 }
 
 .slideRight-enter-from,

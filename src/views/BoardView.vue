@@ -3,8 +3,8 @@
 import CursorView from "../components/CursorView.vue";
 import useStore from "../stores/useStore";
 import NoteView from "../components/NoteView.vue";
-import { onMounted, ref } from "vue";
 import BoardListItem from "../components/BoardListItem.vue";
+import BoardHeader from "../components/BoardHeader.vue";
 
 const store = useStore();
 
@@ -17,51 +17,23 @@ const addNewNote = (e: MouseEvent) => {
   });
 };
 
-const changeTitle = () => {
-  store.save();
-};
-
-const boardListOpen = ref(false);
-
 const newBoard = () => {
   store.newBoard();
-  boardListOpen.value = false;
+  store.boardsListOpen = false;
 };
-
-onMounted(() => {
-  // console.log($refs.items);
-});
 </script>
 <template>
   <div class="board-container">
-    <div class="board-header">
-      <span class="boards-btn" @click="() => (boardListOpen = true)"
-        >Your Boards ({{ store.boards.length }})</span
-      >
-      <input
-        v-model="store.activeBoard.title"
-        placeholder="Board Name"
-        @input="changeTitle"
-      />
-      <div class="flex items-center space-x-4">
-        <span
-          >{{ store.activeBoard.notes.length }} Note<span
-            v-if="store.activeBoard.notes.length > 1"
-            >s</span
-          ></span
-        >
-        <span class="boards-btn" @click="store.clear">Clear All</span>
-      </div>
-    </div>
+    <BoardHeader />
     <Transition name="fade">
       <div
-        @click="() => (boardListOpen = false)"
-        v-if="boardListOpen"
+        @click="() => (store.boardsListOpen = false)"
+        v-if="store.boardsListOpen"
         class="boards-list-backdrop"
       ></div>
     </Transition>
     <Transition name="slideRight">
-      <div v-if="boardListOpen" class="boards-list">
+      <div v-if="store.boardsListOpen" class="boards-list">
         <div>Boards</div>
         <div class="board-list-item" @click="newBoard">
           <svg
