@@ -12,4 +12,12 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
   },
+  overrides: [
+    {
+      files: ["*.js"],
+      rules: {
+        "no-undef": "off",
+      },
+    },
+  ],
 };
