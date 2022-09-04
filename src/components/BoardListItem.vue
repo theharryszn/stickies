@@ -21,7 +21,7 @@ const deleteBoard = () => {
 };
 
 const click = () => {
-  store.activeBoard = props.board;
+  store.config.activeBoardID = props.board.id;
   store.boardsListOpen = false;
   store.save();
 };

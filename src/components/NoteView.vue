@@ -15,18 +15,13 @@ const style = computed(() => {
     top: `${props.note.coords.y}px`,
     left: `${props.note.coords.x}px`,
     backgroundColor: props.note.color,
+    zIndex: store.config.prevID === noteRef.value?.id ? 1000 : 1,
   };
 });
 
 const bringToTop = (e: MouseEvent) => {
   e.stopPropagation();
-  if (noteRef.value) {
-    if (store.prev) {
-      store.prev.style.zIndex = "1";
-    }
-    noteRef.value.style.zIndex = "1000";
-    store.prev = noteRef.value;
-  }
+  store.bringToTop(noteRef);
 };
 
 const inputValue = ref<string>(props.note.content);
@@ -44,7 +39,14 @@ const love = () => {
 };
 </script>
 <template>
-  <div class="note" ref="noteRef" :style="style" @click="bringToTop">
+  <div
+    class="note"
+    :id="note.id"
+    ref="noteRef"
+    :style="style"
+    @click="bringToTop"
+    draggable="true"
+  >
     <div class="note-header">
       <button @click="love" class="delete">
         <svg

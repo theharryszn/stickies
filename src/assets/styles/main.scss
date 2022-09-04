@@ -46,7 +46,7 @@ b {
 }
 
 .board {
-    @apply flex-1 p-4 relative w-full h-full;
+    @apply flex-1 p-4 relative w-full h-full overflow-hidden;
     cursor: crosshair ;
 }
 
@@ -101,7 +101,7 @@ footer {
 }
 
 .boards-list {
-    @apply fixed left-0 top-0 px-8 p-6 bg-white/70 z-[200] flex flex-col w-max shadow-xl h-full space-y-4;
+    @apply fixed left-0 top-0 px-8 p-6 bg-white/70 z-[99999] flex flex-col w-max shadow-xl h-full space-y-4;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
 
@@ -120,7 +120,7 @@ footer {
 }
 
 .boards-list-backdrop {
-    @apply w-screen h-screen fixed top-0 z-50 left-0 bg-black/10;
+    @apply w-screen h-screen fixed top-0 z-[99999] left-0 bg-black/10;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
 }
@@ -134,8 +134,14 @@ footer {
         -webkit-backdrop-filter: blur(6px);
     }
 
+    .label {
+        @apply hidden md:block;
+    }
+
     .boards-btn {
-        @apply p-2 px-4 hover:bg-red-500/25 transition rounded-md cursor-pointer;
+        @apply p-2 px-4 hover:bg-red-500/25 transition rounded-md cursor-pointer flex items-center space-x-1;
+
+       
     }
 }
 

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { v4 as uuid } from "uuid";
+import type { Ref } from "vue";
 
 const colors = [
   "#64748b",
@@ -77,22 +78,80 @@ const getNewBoard = () => {
 
 const DEFAULT_BOARDS = [getNewBoard()];
 
+type Config = {
+  prevID: string | null;
+  activeBoardID: string;
+};
+
+const DEFAULT_CONFIG: Config = {
+  prevID: null,
+  activeBoardID: DEFAULT_BOARDS[0].id,
+};
+
+const getSavedBoards = () => {
+  const storage =
+    localStorage.getItem("boards") || JSON.stringify(DEFAULT_BOARDS);
+  const boards = JSON.parse(storage) as Board[];
+
+  return boards;
+};
+
+const getSavedConfig = () => {
+  const storage =
+    localStorage.getItem("config") || JSON.stringify(DEFAULT_CONFIG);
+
+  const config = JSON.parse(storage) as Config;
+
+  return config;
+};
+
 export default defineStore("stickies", {
   state() {
-    const storage =
-      localStorage.getItem("boards") || JSON.stringify(DEFAULT_BOARDS);
-    const boards = JSON.parse(storage) as Board[];
+    const boards = getSavedBoards();
+    const config = getSavedConfig();
 
     return {
       boards,
-      activeBoard: boards[0],
       boardsListOpen: false,
-      prev: null as HTMLDivElement | null,
+      config,
     };
   },
+  getters: {
+    activeBoard: (state): Board => {
+      return (
+        state.boards.find((board) => board.id === state.config.activeBoardID) ||
+        state.boards[0]
+      );
+    },
+    prev: (state): HTMLDivElement | null => {
+      if (state.config.prevID) {
+        return document.getElementById(
+          state.config.prevID
+        ) as HTMLDivElement | null;
+      }
+
+      return null;
+    },
+  },
   actions: {
+    bringToTop(note: Ref<HTMLDivElement | null>) {
+      if (note.value) {
+        if (this.config.prevID) {
+          const prev = this.prev;
+
+          if (prev) {
+            prev.style.zIndex = "1";
+          }
+        }
+        note.value.style.zIndex = "1000";
+
+        this.config.prevID = note.value.id;
+      }
+      this.save();
+    },
     save() {
       localStorage.setItem("boards", JSON.stringify(this.boards));
+      localStorage.setItem("config", JSON.stringify(this.config));
     },
     clear() {
       const board = this.boards.find(
@@ -110,7 +169,7 @@ export default defineStore("stickies", {
 
       this.boards.push(board);
 
-      this.activeBoard = board;
+      this.config.activeBoardID = board.id;
       this.save();
     },
     deleteBoard(boardId: string) {
@@ -119,7 +178,7 @@ export default defineStore("stickies", {
       this.save();
 
       if (boardId === this.activeBoard.id) {
-        this.activeBoard = this.boards[0];
+        this.config.activeBoardID = this.boards[0].id;
       }
     },
     newNote(coords: { x: number; y: number }) {
