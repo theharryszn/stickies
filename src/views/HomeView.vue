@@ -21,8 +21,7 @@ import FooterView from "../components/FooterView.vue";
           <br />
           <p>
             <b>Fun Fact 😎:</b> This web-app was created when i had my first
-            deep look at
-            <a href="" class="link">Vue</a>
+            deep look at <a href="" class="link">Vue</a>.
           </p>
         </div>
       </div>
