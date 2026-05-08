@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PhX } from "@phosphor-icons/vue";
+import { PhCaretUp } from "@phosphor-icons/vue";
 import useStore from "../stores/useStore";
 
 const store = useStore();
@@ -18,7 +18,7 @@ const store = useStore();
           title="Close"
           @click="store.closeClearBoardConfirm"
         >
-          <PhX :size="16" weight="bold" />
+          <PhCaretUp :size="16" weight="bold" />
         </button>
         <div class="confirm-copy">
           <h2>Clear this board?</h2>

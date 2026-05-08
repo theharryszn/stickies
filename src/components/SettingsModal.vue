@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {
   PhArrowsClockwise,
+  PhCaretUp,
   PhDesktop,
   PhGridFour,
   PhMoon,
   PhSun,
   PhVibrate,
-  PhX,
 } from "@phosphor-icons/vue";
 import useStore from "../stores/useStore";
 
@@ -24,10 +24,13 @@ const store = useStore();
         <div class="settings-header">
           <div>
             <h2>Settings</h2>
-            <p>Keep the board comfortable.</p>
           </div>
-          <button class="settings-icon-btn" title="Close" @click="store.closeSettings">
-            <PhX :size="16" weight="bold" />
+          <button
+            class="settings-icon-btn"
+            title="Close"
+            @click="store.closeSettings"
+          >
+            <PhCaretUp :size="16" weight="bold" />
           </button>
         </div>
 
@@ -68,7 +71,9 @@ const store = useStore();
                 <PhGridFour :size="18" />
                 Board grid
               </span>
-              <span class="settings-row-desc">Show alignment lines on the canvas.</span>
+              <span class="settings-row-desc"
+                >Show alignment lines on the canvas.</span
+              >
             </span>
             <button
               type="button"
@@ -87,7 +92,9 @@ const store = useStore();
                 <PhVibrate :size="18" />
                 Haptics
               </span>
-              <span class="settings-row-desc">Use light feedback for board actions.</span>
+              <span class="settings-row-desc"
+                >Use light feedback for board actions.</span
+              >
             </span>
             <button
               type="button"
@@ -102,10 +109,10 @@ const store = useStore();
           </label>
         </div>
 
-        <button class="settings-reset" @click="store.resetCanvasView">
+        <!-- <button class="settings-reset" @click="store.resetCanvasView">
           <PhArrowsClockwise :size="16" />
           Reset board view
-        </button>
+        </button> -->
       </div>
     </div>
   </Transition>

@@ -93,6 +93,9 @@ const getNewBoard = () => {
 };
 
 const DEFAULT_BOARDS = [getNewBoard()];
+const NOTE_SIZE = 320;
+const RESET_BOARD_TOP_OFFSET = 88;
+const RESET_BOARD_LEFT_OFFSET = 24;
 
 type Config = {
   prevID: string | null;
@@ -245,11 +248,47 @@ export default defineStore("stickies", {
       }
     },
     resetCanvasView() {
+      this.config.zoom = 1;
+      const notes = this.activeBoard.notes;
       this.config.offset = {
         x: 0,
         y: 0,
       };
-      this.config.zoom = 1;
+
+      if (notes.length === 0) {
+        this.save();
+        this.haptic("medium");
+        return;
+      }
+
+      const bounds = notes.reduce(
+        (acc, note) => {
+          return {
+            minX: Math.min(acc.minX, note.coords.x),
+            minY: Math.min(acc.minY, note.coords.y),
+            maxX: Math.max(acc.maxX, note.coords.x + NOTE_SIZE),
+            maxY: Math.max(acc.maxY, note.coords.y + NOTE_SIZE),
+          };
+        },
+        {
+          minX: Number.POSITIVE_INFINITY,
+          minY: Number.POSITIVE_INFINITY,
+          maxX: Number.NEGATIVE_INFINITY,
+          maxY: Number.NEGATIVE_INFINITY,
+        }
+      );
+
+      const delta = {
+        x: RESET_BOARD_LEFT_OFFSET - bounds.minX,
+        y: RESET_BOARD_TOP_OFFSET - bounds.minY,
+      };
+
+      notes.forEach((note) => {
+        note.coords = {
+          x: note.coords.x + delta.x,
+          y: note.coords.y + delta.y,
+        };
+      });
       this.save();
       this.haptic("medium");
     },
