@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { PhHeart, PhX } from "@phosphor-icons/vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import type { Note } from "../stores/useStore";
 import useStore from "../stores/useStore";
 
@@ -15,9 +16,13 @@ const style = computed(() => {
     top: `${props.note.coords.y}px`,
     left: `${props.note.coords.x}px`,
     backgroundColor: props.note.color,
-    zIndex: store.config.prevID === noteRef.value?.id ? 1000 : 1,
+    zIndex: props.note.zIndex || 1,
   };
 });
+
+const isFiltered = computed(
+  () => store.config.focusFavorites && !props.note.loved
+);
 
 const bringToTop = (e: MouseEvent) => {
   e.stopPropagation();
@@ -25,66 +30,110 @@ const bringToTop = (e: MouseEvent) => {
 };
 
 const inputValue = ref<string>(props.note.content);
+const dragging = ref(false);
+const deleting = ref(false);
 
-const onInput = () => {
+const onInput = (event: Event) => {
+  const value = (event.target as HTMLTextAreaElement).value;
+  const textareaLines = value.split("\n").length;
+
+  if (textareaLines > 11) {
+    inputValue.value = props.note.content;
+    return;
+  }
+
   store.updateNoteContent(props.note.id, inputValue.value);
 };
 
 const remove = () => {
-  store.deleteNote(props.note.id);
+  deleting.value = true;
+  window.setTimeout(() => {
+    store.deleteNote(props.note.id);
+  }, 120);
 };
 
 const love = () => {
   store.love(props.note.id);
 };
+
+const toggleColor = () => {
+  store.cycleNoteColor(props.note.id);
+};
+
+const startDrag = (e: MouseEvent) => {
+  e.stopPropagation();
+  dragging.value = true;
+  store.isDraggingNote = true;
+  store.bringToTop(noteRef);
+};
+
+const drag = (e: MouseEvent) => {
+  if (!dragging.value) {
+    return;
+  }
+
+  store.moveNote(props.note.id, {
+    x: e.movementX / store.config.zoom,
+    y: e.movementY / store.config.zoom,
+  });
+};
+
+const stopDrag = () => {
+  dragging.value = false;
+  store.isDraggingNote = false;
+};
+
+onMounted(() => {
+  window.addEventListener("mousemove", drag);
+  window.addEventListener("mouseup", stopDrag);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("mousemove", drag);
+  window.removeEventListener("mouseup", stopDrag);
+});
 </script>
 <template>
   <div
     class="note"
+    :class="{ 'is-filtered': isFiltered, 'is-deleting': deleting }"
     :id="note.id"
     ref="noteRef"
     :style="style"
     @click="bringToTop"
-    draggable="true"
+    @mousedown="bringToTop"
   >
-    <div class="note-header">
-      <button @click="love" class="delete">
-        <svg
-          class="w-3.5 h-3.5"
-          :class="{ 'fill-white stroke-white': note.loved }"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-          ></path>
-        </svg>
+    <div class="note-handle" @mousedown="startDrag"></div>
+    <div class="note-options">
+      <button
+        @click.stop="love"
+        class="note-option like"
+        :title="note.loved ? 'Remove from favorites' : 'Add to favorites'"
+      >
+        <PhHeart
+          :size="14"
+          :weight="note.loved ? 'fill' : 'regular'"
+          :class="{ 'heart-icon': note.loved }"
+        />
       </button>
-      <button @click="remove" class="delete">
-        <svg
-          class="w-3.5 h-3.5"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-            clip-rule="evenodd"
-          ></path>
-        </svg>
+      <button
+        @click.stop="toggleColor"
+        class="note-option color"
+        title="Change color"
+      >
+        <span :style="{ backgroundColor: note.color }"></span>
+      </button>
+      <button @click.stop="remove" class="note-option delete" title="Delete">
+        <PhX :size="14" weight="bold" />
       </button>
     </div>
     <textarea
       class="content"
       placeholder="Write Something"
+      maxlength="436"
       v-model="inputValue"
       @input="onInput"
+      @click.stop
     ></textarea>
   </div>
 </template>

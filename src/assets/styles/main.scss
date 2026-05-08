@@ -2,7 +2,21 @@
 
 
 body {
-    @apply text-gray-900;
+    @apply text-gray-900 bg-slate-50 dark:bg-black dark:text-slate-100;
+}
+
+.heart-icon {
+    color: #e0245e;
+}
+
+:root {
+    --surface-border: rgba(255, 255, 255, 0.16);
+    --accent-border: rgba(229, 92, 92, 0.14);
+}
+
+.dark {
+    --surface-border: rgba(255, 255, 255, 0.08);
+    --accent-border: rgba(255, 255, 255, 0.08);
 }
 
 b {
@@ -14,7 +28,12 @@ b {
 }
 
 .board-container {
-    @apply w-screen h-screen flex flex-col;
+    @apply w-screen h-screen flex flex-col overflow-hidden;
+    cursor: none;
+}
+
+.board-container * {
+    cursor: none !important;
 }
 
 @keyframes text-up {
@@ -46,19 +65,64 @@ b {
 }
 
 .board {
-    @apply flex-1 p-4 relative w-full h-full overflow-hidden;
-    cursor: crosshair ;
+    @apply flex-1 relative w-full h-full overflow-hidden;
+    cursor: none;
+    background-image:
+        linear-gradient(rgba(15, 23, 42, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+}
+
+.dark .board {
+    background-color: #050505;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+}
+
+.board.board--focus-favorites {
+    background-image:
+        linear-gradient(rgba(15, 23, 42, 0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.012) 1px, transparent 1px);
+}
+
+.dark .board.board--focus-favorites {
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+}
+
+.board.board--no-grid {
+    background-image: none;
+}
+
+.board-canvas {
+    @apply absolute inset-0;
+    will-change: transform;
 }
 
 .cursor {
-    @apply hidden w-10 h-10 rounded-full bg-red-500/20 z-[99999] transform -translate-y-1/2 -translate-x-1/2 fixed ;
-    transition: .3s opacity cubic-bezier(1, 0, 0, 1);
+    @apply items-center justify-center hidden w-16 h-16 rounded-full bg-red-500/5 border-primary/10 border z-[9999999] transform -translate-y-1/2 -translate-x-1/2 fixed;
+    transition: opacity .3s cubic-bezier(1, 0, 0, 1), width .12s ease, height .12s ease, background-color .12s ease, border-color .12s ease;
     pointer-events: none;
+}
+
+.cursor--pointer {
+    @apply bg-primary/5 border-primary/20;
+}
+
+.cursor--hand,
+.cursor--grabbing {
+    @apply bg-primary/5 border-primary/20;
+}
+
+.cursor--text {
+    @apply w-10 h-14 rounded-md bg-secondary/5 border-secondary/20;
 }
 
 @media (hover: hover) {
     .cursor {
-        @apply block;
+        @apply flex;
     }
 
     .delete-board {
@@ -85,7 +149,7 @@ b {
 }
 
 .cta {
-    @apply bg-red-500 p-4 px-6 text-base text-white rounded-full font-normal transform hover:scale-105 transition;  
+    @apply bg-secondary p-4 px-6 text-base text-white rounded-full font-normal transform hover:scale-105 transition;  
 }
 
 .cta-container {
@@ -101,35 +165,81 @@ footer {
 }
 
 .boards-list {
-    @apply fixed left-0 top-0 px-8 p-6 bg-white/70 z-[99999] flex flex-col w-max shadow-xl h-full space-y-4;
+    @apply fixed left-0 top-0 bg-white/70 dark:bg-black/50 z-[99999] flex flex-col w-max shadow-xl h-full space-y-4 overflow-hidden border-r;
+    border-color: var(--surface-border);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
 
+    .boards-search {
+        @apply flex items-center gap-2 w-48 px-3 py-2 bg-secondary/5 rounded-full text-sm;
+
+        input {
+            @apply bg-transparent outline-none min-w-0 flex-1 placeholder:text-gray-500 dark:placeholder:text-neutral-500;
+        }
+    }
+
+    .boards-empty {
+        @apply w-48 text-center text-xs text-gray-500 dark:text-neutral-500 py-4;
+    }
+
+    .boards-list-header {
+        @apply flex flex-col gap-4 px-6;
+    }
+
+    .boards-list-scroll {
+        @apply flex flex-col gap-4 overflow-y-auto pb-4 px-6;
+        min-height: 0;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(229, 92, 92, 0.35) transparent;
+
+        &::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba(229, 92, 92, 0.25);
+            border-radius: 9999px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+
+        &:hover::-webkit-scrollbar-thumb {
+            background: rgba(229, 92, 92, 0.45);
+            background-clip: content-box;
+        }
+    }
+
     .board-list-item {
-        @apply relative w-48 aspect-video border-red-500 opacity-80 hover:opacity-100 border-2 ring-4 ring-red-500/5 hover:border-red-500 flex items-center justify-center rounded-md text-sm transition cursor-pointer transform hover:scale-105;
+        @apply shrink-0;
+        @apply relative w-48 aspect-video border-secondary opacity-80 hover:opacity-100 border-2 ring-4 ring-secondary/5 hover:border-secondary flex items-center justify-center rounded-md text-sm transition cursor-pointer transform hover:scale-105;
 
         .delete-board {
-            @apply bg-red-500/90 text-white rounded-full p-2 absolute right-0 top-0 transform translate-x-1/2 -translate-y-1/2;
+            @apply bg-secondary/90 text-white rounded-full p-2 absolute right-2 top-2 transform ;
         }
 
     }
 
     .board-list-item.active {
-        @apply border-red-500 border-2;
+        @apply border-secondary border-2;
     }
 }
 
 .boards-list-backdrop {
-    @apply w-screen h-screen fixed top-0 z-[99999] left-0 bg-black/10;
+    @apply w-screen h-screen fixed top-0 z-[99999] left-0 bg-black/10 dark:bg-black/40;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
 }
 
 .board-header {
-    @apply flex justify-between items-center p-4 fixed top-0 w-full z-50;
+    @apply flex justify-between items-center gap-4 p-4 fixed top-0 w-full z-[99999] text-sm pointer-events-none;
 
     input {
-        @apply outline-none text-center p-2 rounded-md bg-white/50;
+        @apply outline-none text-center p-2 rounded-full bg-white/50 dark:bg-black/50 border shadow-sm pointer-events-auto hover:bg-secondary/10;
+        border-color: var(--surface-border);
         backdrop-filter: blur(6px);
         -webkit-backdrop-filter: blur(6px);
     }
@@ -139,9 +249,24 @@ footer {
     }
 
     .boards-btn {
-        @apply p-2 px-4 hover:bg-red-500/25 transition rounded-md cursor-pointer flex items-center space-x-1;
+        @apply p-2 px-4 bg-transparent hover:bg-white/70 dark:hover:bg-white/10 transition rounded-full cursor-pointer flex items-center gap-2 pointer-events-auto;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
 
-       
+    .board-actions {
+        @apply flex items-center gap-2 pointer-events-auto;
+    }
+
+    .board-stat,
+    .tool-btn {
+        @apply min-w-[2.75rem] h-10 px-3 rounded-full bg-transparent hover:bg-white/70 dark:hover:bg-white/10 transition flex items-center justify-center gap-2;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
+    .tool-btn.active {
+        @apply text-secondary;
     }
 }
 
@@ -151,27 +276,209 @@ footer {
 
 
 .note {
-    @apply bg-red-500 h-[16rem] max-h-[rem] aspect-square text-white p-4 shadow-2xl rounded-sm absolute text-sm overflow-hidden;
+    @apply bg-red-500 h-[20rem] max-h-[20rem] aspect-square text-white shadow-2xl rounded-md absolute text-sm flex flex-col border border-white/20;
+    transition: filter .15s ease, opacity .15s ease;
 
-    .note-header {
-        @apply text-white p-2 flex justify-end space-x-1 absolute cursor-pointer top-0 right-0 transition;
-        transform: translateY(-100%);
+    &.is-filtered {
+        @apply opacity-30;
+        filter: blur(12px);
+        pointer-events: none;
+    }
+
+    &.is-deleting {
+        animation: note-delete .12s ease-in forwards;
+        pointer-events: none;
+    }
+
+    .note-handle {
+        @apply top-0 w-full left-0 bg-black/5 h-5 cursor-move rounded-t-md hover:bg-black/10 shrink-0;
+    }
+
+    .note-options {
+        @apply text-white p-2 flex flex-col justify-end gap-1 absolute cursor-pointer top-0 left-full transition opacity-0;
+        transform: translateX(-100%);
         transition-timing-function: cubic-bezier(1, 0, 0, 1);
 
-        .delete {
-            @apply bg-black/10 rounded-full p-2;
+        .note-option {
+            @apply bg-black/20 rounded-full p-2 hover:bg-black/30 transition;
+        }
+
+        .color span {
+            @apply block w-3.5 h-3.5 rounded-full border border-white/70;
         }
     }
 
     &:hover {
-        .note-header {
-            transform: translateY(0%);
+        .note-options {
+            transform: translateX(0%);
+            opacity: 1;
         }
     }
 
     .content {
-        @apply  bg-transparent resize-none outline-none w-full h-full placeholder:text-white/50 leading-relaxed;
+        @apply bg-transparent selection:bg-black/20 overflow-hidden rounded-b-md p-3 mt-1 resize-none outline-none w-full flex-1 placeholder:text-white/50 leading-relaxed;
     }
+}
+
+@keyframes note-delete {
+    from {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        filter: blur(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(.86) rotate(-2deg);
+        filter: blur(3px);
+    }
+}
+
+.favorites-banner {
+    @apply fixed bottom-5 left-1/2 -translate-x-1/2 z-[99999] text-xs text-center p-2 bg-white/50 dark:bg-black/50 rounded-full px-6 shadow-sm pointer-events-none border;
+    border-color: var(--surface-border);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.settings-backdrop {
+    @apply fixed inset-0 z-[100000] flex items-center justify-center bg-black/20 dark:bg-black/60 p-4;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.settings-modal {
+    @apply w-full max-w-md rounded-xl bg-white/70 dark:bg-black/50 border shadow-2xl p-5 space-y-5;
+    border-color: var(--surface-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.settings-header {
+    @apply flex items-start justify-between gap-4;
+
+    h2 {
+        @apply text-lg font-semibold;
+    }
+
+    p {
+        @apply text-sm text-gray-500 dark:text-neutral-400 mt-1;
+    }
+}
+
+.settings-icon-btn {
+    @apply w-9 h-9 rounded-full flex items-center justify-center hover:bg-secondary/10 transition;
+}
+
+.settings-section {
+    @apply space-y-3;
+}
+
+.settings-section-title {
+    @apply text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-neutral-400;
+}
+
+.theme-options {
+    @apply grid grid-cols-3 gap-2;
+}
+
+.theme-option {
+    @apply h-20 rounded-xl border bg-white/30 dark:bg-black/20 flex flex-col items-center justify-center gap-2 text-sm hover:bg-secondary/10 transition;
+    border-color: var(--accent-border);
+}
+
+.theme-option.active {
+    @apply text-secondary bg-secondary/10;
+    border-color: rgba(229, 92, 92, 0.36);
+}
+
+.settings-row {
+    @apply flex items-center justify-between gap-4 rounded-xl border bg-white/30 dark:bg-black/20 p-4;
+    border-color: var(--accent-border);
+}
+
+.settings-row-copy {
+    @apply flex flex-col gap-1;
+}
+
+.settings-row-title {
+    @apply flex items-center gap-2 font-medium;
+}
+
+.settings-row-desc {
+    @apply text-xs text-gray-500 dark:text-neutral-400;
+}
+
+.settings-switch {
+    @apply relative h-7 w-12 shrink-0 rounded-full bg-gray-300 dark:bg-white/10 transition;
+
+    span {
+        @apply absolute left-1 top-1 h-5 w-5 rounded-full bg-white shadow transition;
+    }
+}
+
+.settings-switch.active {
+    @apply bg-secondary;
+
+    span {
+        transform: translateX(1.25rem);
+    }
+}
+
+.settings-switch:focus-visible {
+    @apply outline-none ring-4 ring-secondary/20;
+}
+
+.settings-reset {
+    @apply w-full h-11 rounded-full border bg-white/30 dark:bg-black/20 flex items-center justify-center gap-2 text-sm hover:bg-secondary/10 transition;
+    border-color: var(--accent-border);
+}
+
+.confirm-backdrop {
+    @apply fixed inset-0 z-[100001] flex items-center justify-center bg-black/20 dark:bg-black/60 p-4;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.confirm-modal {
+    @apply relative w-full max-w-sm rounded-xl bg-white/70 dark:bg-black/50 border shadow-2xl p-5 space-y-5 text-center;
+    border-color: var(--surface-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.confirm-close {
+    @apply absolute right-3 top-3 h-8 w-8 rounded-full flex items-center justify-center hover:bg-secondary/10 transition;
+}
+
+.confirm-copy {
+    @apply space-y-2;
+
+    h2 {
+        @apply text-lg font-semibold;
+    }
+
+    p {
+        @apply text-sm text-gray-500 dark:text-neutral-400 leading-relaxed;
+    }
+}
+
+.confirm-actions {
+    @apply grid grid-cols-2 gap-2;
+}
+
+.confirm-cancel,
+.confirm-danger {
+    @apply h-11 rounded-full text-sm font-medium transition;
+}
+
+.confirm-cancel {
+    @apply border bg-white/30 dark:bg-black/20 hover:bg-secondary/10;
+    border-color: var(--accent-border);
+}
+
+.confirm-danger {
+    @apply bg-secondary text-white hover:brightness-95;
 }
 
 .fade-enter-to,
