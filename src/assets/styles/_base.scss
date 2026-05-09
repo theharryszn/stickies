@@ -6,10 +6,12 @@
 // Resets
 * {
     box-sizing: border-box;
+    cursor: none !important;
 
     &::before,
     &::after {
         box-sizing: border-box;
+        cursor: none !important;
     }
 }
 
