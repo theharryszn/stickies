@@ -9,7 +9,6 @@ import SettingsModal from "../components/SettingsModal.vue";
 import ConfirmClearBoardModal from "../components/ConfirmClearBoardModal.vue";
 import { PhMagnifyingGlass, PhPlus } from "@phosphor-icons/vue";
 import { computed, ref } from "vue";
-import FooterView from "@/components/FooterView.vue";
 
 const store = useStore();
 const canvasRef = ref<HTMLDivElement | null>(null);

@@ -11,13 +11,7 @@ import { onMounted, onUnmounted, ref } from "vue";
 import useStore from "../stores/useStore";
 
 const store = useStore();
-type CursorKind =
-  | "add"
-  | "favorite"
-  | "pointer"
-  | "text"
-  | "hand"
-  | "grabbing";
+type CursorKind = "add" | "favorite" | "pointer" | "text" | "hand" | "grabbing";
 
 const style = ref({
   top: "0px",
@@ -102,11 +96,6 @@ onUnmounted(() => {
       :size="20"
       weight="fill"
     />
-    <PhPlus
-      v-else
-      class="text-secondary"
-      :size="20"
-      weight="bold"
-    />
+    <PhPlus v-else class="text-secondary" :size="20" weight="bold" />
   </div>
 </template>

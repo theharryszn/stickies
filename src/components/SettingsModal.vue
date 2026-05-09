@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  PhArrowsClockwise,
   PhCaretUp,
   PhDesktop,
   PhGridFour,
